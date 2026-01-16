@@ -1,0 +1,46 @@
+# ci/build-python-bindings.yml
+name: Python Bindings
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          pip install pybind11 pytest pandas matplotlib
+
+      - name: Generate mock ITCH data
+        run: python scripts/gen_mock_itch.py --output data/mock.NASDAQ_ITCH50 --events 50000
+
+      - name: Configure CMake
+        run: |
+          cmake -B build-py \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DORDERBOOK_PYTHON=ON \
+            -Dpybind11_DIR=$(python -c "import pybind11; print(pybind11.get_cmake_dir())")
+
+      - name: Build Python module
+        run: cmake --build build-py --target orderbook -j$(nproc)
+
+      - name: Validate module loads
+        run: PYTHONPATH=build-py python -c "import orderbook; print(orderbook.__doc__)"
+
+      - name: Run Python smoke tests
+        run: |
+          PYTHONPATH=build-py \
+          ITCH_FILE=data/mock.NASDAQ_ITCH50 \
+          pytest tests/python/ -v --tb=short

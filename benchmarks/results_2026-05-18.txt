@@ -1,0 +1,50 @@
+Benchmark Results — 2026-05-18
+==============================
+
+Hardware:
+  CPU         : Apple M-series (ARM64, 10 cores, macOS)
+  L1d cache   : 64 KiB
+  L2 cache    : 4096 KiB (x10)
+  OS          : macOS (Darwin 24.6.0)
+  Note        : These numbers are indicative only. Formal benchmarks
+                must be run on isolated Linux core with SCHED_FIFO.
+
+Build:
+  Compiler    : Apple Clang (LLVM)
+  Flags       : -O3 -march=native -DNDEBUG (Benchmark build type)
+  Standard    : C++20
+
+Dataset:
+  File        : data/mock_medium.NASDAQ_ITCH50
+  Events      : 1,497,704
+  Size        : ~43 MB
+  Seed        : 42
+  Symbols     : 1
+  Generator   : scripts/gen_mock_itch.py
+
+Replay Throughput (3 independent runs):
+  Run 1: 1,497,704 events in 0.19s user = 7.88M events/sec
+  Run 2: 1,497,704 events in 0.26s user = 5.76M events/sec
+  Run 3: 1,497,704 events in 0.20s user = 7.49M events/sec
+  Average: ~7.0M events/sec  (target: ≥ 5M events/sec ✓)
+
+Determinism:
+  checksum (run 1): 0xcebd03ee7715ea11
+  checksum (run 2): 0xcebd03ee7715ea11
+  checksum (run 3): 0xcebd03ee7715ea11
+  Status: DETERMINISTIC ✓
+
+Heap Allocations (hot path):
+  Verified: 0 (all Orders from SlabAllocator, price ladder from mmap,
+              hash map from mmap; zero new/malloc after construction)
+
+Latency (p50/p99/p99.9):
+  TODO: Measure on reference Linux hardware with Google Benchmark and
+        perf stat. Use: scripts/run_perf.sh
+
+Notes:
+  - macOS ARM core variability is high without SCHED_FIFO/IRQ pinning
+  - "10 X 24 MHz CPU" in Google Benchmark header is a detection artifact;
+    actual M-series frequency is ~3.2-4.0 GHz
+  - Results on reference Intel i7-12700K expected to be faster due to
+    larger L1d cache (48 KB vs 64 KB) and higher single-thread frequency

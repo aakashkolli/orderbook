@@ -1,0 +1,17 @@
+build/
+build-*/
+CMakeFiles/
+*.o
+*.a
+*.so
+data/
+benchmarks/perf_results.txt
+*.DS_Store
+.venv/
+__pycache__/
+*.pyc
+corpus/
+flamegraph.svg
+perf.data
+perf.data.old
+compile_commands.json

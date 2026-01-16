@@ -1,0 +1,28 @@
+orderbook/
+├── CLAUDE.md
+├── CMakeLists.txt
+├── README.md
+├── .github/workflows/ci.yml
+├── include/
+│   ├── order_book.h
+│   ├── slab_allocator.h
+│   ├── feed_handler.h
+│   ├── fill_simulator.h
+│   └── pnl_tracker.h
+├── src/
+│   ├── order_book.cpp
+│   ├── slab_allocator.cpp
+│   ├── feed_handler.cpp
+│   ├── fill_simulator.cpp
+│   └── pnl_tracker.cpp
+├── benchmarks/
+│   └── bench_orderbook.cpp
+├── tests/
+│   ├── test_book_invariants.cpp
+│   └── fuzz_book.cpp
+├── data/
+│   └── README.md               # instructions to download ITCH sample data
+├── analysis/
+│   └── pnl_analysis.ipynb
+└── scripts/
+    └── run_perf.sh             # perf stat invocation
